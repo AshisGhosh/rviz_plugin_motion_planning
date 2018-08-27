@@ -1,0 +1,9 @@
+<library path="lib/libplugin_panel">
+    <class name="plugin_panel/HelloWorld"
+           type="PluginPanel"
+           base_class_type="rviz::Panel">
+        <description>
+            An empty panel.
+        </description>
+    </class>
+</library>
