@@ -1,5 +1,5 @@
 <library path="lib/libplugin_panel">
-    <class name="plugin_panel/HelloWorld"
+    <class name="plugin_panel/PathViewer"
            type="PluginPanel"
            base_class_type="rviz::Panel">
         <description>

@@ -1,8 +1,19 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(plugin_panel)
-find_package(catkin REQUIRED COMPONENTS rviz)
+find_package(catkin REQUIRED COMPONENTS 
+  roscpp
+  visualization_msgs
+  interactive_markers
+  tf
+  rviz
+)
+catkin_package()
 include_directories(${catkin_INCLUDE_DIRS})
 link_directories(${catkin_LIBRARY_DIRS})
+
+add_executable(create_markers src/create_markers.cpp)
+target_link_libraries(create_markers ${catkin_LIBRARIES})
+
 
 ## This setting causes Qt's "MOC" generation to happen automatically.
 set(CMAKE_AUTOMOC ON)
@@ -30,6 +41,8 @@ add_definitions(-DQT_NO_KEYWORDS)
 set(SRC_FILES
   src/plugin_panel.cpp
 )
+
+
 
 ## An rviz plugin is just a shared library, so here we declare the
 ## library to be called ``${PROJECT_NAME}`` (which is
