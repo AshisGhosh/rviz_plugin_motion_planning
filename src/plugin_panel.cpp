@@ -72,6 +72,7 @@ PluginPanel::PluginPanel(QWidget* parent):
 
 }
 
+// Add
 void PluginPanel::button1_on_click()
 {
     int row = _stringlist1->rowCount();
@@ -87,12 +88,13 @@ void PluginPanel::button1_on_click()
     _tableview->edit(index);
 }
 
+// Delete
 void PluginPanel::button2_on_click()
 {
     _stringlist1->removeRows(_tableview->currentIndex().row(),1);
 }
 
-
+// Load path
 void PluginPanel::button3_on_click()
 {
     server->clear();

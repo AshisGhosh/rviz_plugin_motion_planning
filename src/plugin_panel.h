@@ -30,6 +30,8 @@ protected:
     QTableWidget* _tablewidget;
     WaypointModel* _waypointmodel;
 
+    // Contact* _contacts;
+
     
 
     // The ROS node handle.
