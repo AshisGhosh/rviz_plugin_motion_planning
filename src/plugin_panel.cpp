@@ -30,6 +30,7 @@ PluginPanel::PluginPanel(QWidget* parent):
     _listview = new QListView();
 
     _stringlist1 = new QStringListModel();
+
     QStringList list;
     list << "a" << "b" << "c";
     _stringlist1->setStringList(list);
@@ -40,15 +41,22 @@ PluginPanel::PluginPanel(QWidget* parent):
                             QAbstractItemView::DoubleClicked);
 
     _tableview = new QTableView();
-    _tablemodel = new QTableModel();
+
+    _waypointmodel = new WaypointModel();
+    // _waypointmodel->Columns[0].clear();
+
+    _tableview->setModel(_waypointmodel);
+
+    _tablewidget = new QTableWidget();
     
 
     _hbox1->addWidget(_button1);
     _hbox1->addWidget(_button2);
     
-    _vbox->addWidget(_listview);
+    _vbox->addWidget(_tableview);
     _vbox->addLayout(_hbox1);
     _vbox->addWidget(_button3);
+    
 
     
     setLayout(_vbox);
@@ -75,13 +83,13 @@ void PluginPanel::button1_on_click()
     QModelIndex index = _stringlist1->index(row);
 
     // Enable item selection and put it edit mode
-    _listview->setCurrentIndex(index);
-    _listview->edit(index);
+    _tableview->setCurrentIndex(index);
+    _tableview->edit(index);
 }
 
 void PluginPanel::button2_on_click()
 {
-    _stringlist1->removeRows(_listview->currentIndex().row(),1);
+    _stringlist1->removeRows(_tableview->currentIndex().row(),1);
 }
 
 

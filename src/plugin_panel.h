@@ -5,6 +5,7 @@
 #include <interactive_markers/interactive_marker_client.h>
 #include <interactive_markers/interactive_marker_server.h>
 #include <interactive_markers/menu_handler.h>
+#include "waypoint_table_model.h"
 
 
 class PluginPanel: public rviz::Panel
@@ -26,7 +27,10 @@ protected:
     QStringListModel* _stringlist1;
 
     QTableView* _tableview;
-    QTableModel* _tablemodel;
+    QTableWidget* _tablewidget;
+    WaypointModel* _waypointmodel;
+
+    
 
     // The ROS node handle.
     ros::NodeHandle nh_;
