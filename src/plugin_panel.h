@@ -5,7 +5,7 @@
 #include <interactive_markers/interactive_marker_client.h>
 #include <interactive_markers/interactive_marker_server.h>
 #include <interactive_markers/menu_handler.h>
-#include "waypoint_table_model.h"
+#include "waypointmodel.h"
 
 
 class PluginPanel: public rviz::Panel
@@ -14,6 +14,8 @@ class PluginPanel: public rviz::Panel
 
 public:
     PluginPanel(QWidget* parent = 0);
+    WaypointModel* waypointmodel;
+    boost::shared_ptr<interactive_markers::InteractiveMarkerServer> server;
 
 protected:
     QVBoxLayout* _vbox;
@@ -22,31 +24,29 @@ protected:
     QPushButton* _button1;
     QPushButton* _button2;
     QPushButton* _button3;
+    QPushButton* _button4;
 
     QListView* _listview;
     QStringListModel* _stringlist1;
 
     QTableView* _tableview;
-    QTableWidget* _tablewidget;
-    WaypointModel* _waypointmodel;
 
-    // Contact* _contacts;
 
     
 
     // The ROS node handle.
     ros::NodeHandle nh_;
-    boost::shared_ptr<interactive_markers::InteractiveMarkerServer> server;
     boost::shared_ptr<interactive_markers::InteractiveMarkerClient> _client;
     // interactive_markers::InteractiveMarkerClient* _client;
 
 private:
-    // void processFeedback(const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback);
     void make6DofMarker(std::string name, bool fixed, unsigned int interaction_mode, const tf::Vector3& position, bool show_6dof );
+    // void processFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback );
 
 private Q_SLOTS:
     void button1_on_click();
     void button2_on_click();
     void button3_on_click();
+    void button4_on_click();
 
 };

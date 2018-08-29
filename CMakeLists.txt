@@ -40,7 +40,8 @@ add_definitions(-DQT_NO_KEYWORDS)
 ## The generated MOC files are included automatically as headers.
 set(SRC_FILES
   src/plugin_panel.cpp
-  src/waypoint_table_model.cpp
+  src/tablemodel.cpp
+  src/waypointmodel.cpp
 )
 
 

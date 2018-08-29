@@ -2,10 +2,10 @@
 
 #include "plugin_panel.h"
 #include <string>
+#include <iostream>
 
 
-
-
+WaypointModel* g_waypointmodel = new WaypointModel();
 
 PluginPanel::PluginPanel(QWidget* parent):
     rviz::Panel(parent)
@@ -16,16 +16,22 @@ PluginPanel::PluginPanel(QWidget* parent):
     _button1 = new QPushButton(tr("Add"));
     _button2 = new QPushButton(tr("Delete"));
     _button3 = new QPushButton(tr("Load Path"));
+    _button4 = new QPushButton(tr("Update Path"));
 
     _button1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _button2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     _button3->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
+    _button4->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+
     connect(_button1, SIGNAL (released()), this, SLOT (button1_on_click()));
     connect(_button2, SIGNAL (released()), this, SLOT (button2_on_click()));
 
     connect(_button3, SIGNAL (released()), this, SLOT (button3_on_click()));
+
+    connect(_button4, SIGNAL (released()), this, SLOT (button4_on_click()));
 
     _listview = new QListView();
 
@@ -40,15 +46,18 @@ PluginPanel::PluginPanel(QWidget* parent):
             setEditTriggers(QAbstractItemView::AnyKeyPressed |
                             QAbstractItemView::DoubleClicked);
 
+
+   
+
+    Waypoint waypoint = {};
+    QList<Waypoint> waypoints;
+    waypoints.push_back(waypoint);
+    // waypointmodel = g_waypointmodel;
+    waypointmodel = new WaypointModel(waypoints);
+    // waypointmodel->setWaypoints(waypoints);
+
     _tableview = new QTableView();
-
-    _waypointmodel = new WaypointModel();
-    // _waypointmodel->Columns[0].clear();
-
-    _tableview->setModel(_waypointmodel);
-
-    _tablewidget = new QTableWidget();
-    
+    _tableview->setModel(waypointmodel);    
 
     _hbox1->addWidget(_button1);
     _hbox1->addWidget(_button2);
@@ -56,7 +65,7 @@ PluginPanel::PluginPanel(QWidget* parent):
     _vbox->addWidget(_tableview);
     _vbox->addLayout(_hbox1);
     _vbox->addWidget(_button3);
-    
+    _vbox->addWidget(_button4); 
 
     
     setLayout(_vbox);
@@ -75,13 +84,14 @@ PluginPanel::PluginPanel(QWidget* parent):
 // Add
 void PluginPanel::button1_on_click()
 {
-    int row = _stringlist1->rowCount();
+    int row = waypointmodel->rowCount(QModelIndex());
 
     // Enable add one or more rows
-    _stringlist1->insertRows(row,1);
+    waypointmodel->insertRows(row,1);
 
+    // TODO: Figure out indexing
     // Get the row for Edit mode
-    QModelIndex index = _stringlist1->index(row);
+    QModelIndex index = waypointmodel->index(row,0, QModelIndex());
 
     // Enable item selection and put it edit mode
     _tableview->setCurrentIndex(index);
@@ -91,7 +101,7 @@ void PluginPanel::button1_on_click()
 // Delete
 void PluginPanel::button2_on_click()
 {
-    _stringlist1->removeRows(_tableview->currentIndex().row(),1);
+    waypointmodel->removeRows(_tableview->currentIndex().row(),1);
 }
 
 // Load path
@@ -100,20 +110,47 @@ void PluginPanel::button3_on_click()
     server->clear();
     server->applyChanges();
 
-    int count = _stringlist1->rowCount();
+    int count = waypointmodel->rowCount(QModelIndex());
     ROS_INFO_STREAM("Path has " << count << " waypoints.");
+    QList<Waypoint> waypoints = waypointmodel->getWaypoints();
+    for (QList<Waypoint>::iterator it = waypoints.begin(); it != waypoints.end(); ++it){
+        ROS_INFO_STREAM(it->x << it->y << it->z);
 
-    for( int i = 0; i < count; i++ ) {
-      tf::Vector3 position;
-      position = tf::Vector3( i, 0, 0);
-      char name[50];
-      sprintf(name,"%d",i);
-      make6DofMarker(name, false, visualization_msgs::InteractiveMarkerControl::MOVE_ROTATE_3D, position, true );
-      server->applyChanges();
-    }
-    
+        int i = it - waypoints.begin();
+        tf::Vector3 position;
+        position = tf::Vector3( it->x, it->y, it->z);
+        char name[50];
+        sprintf(name,"%d",i);
+        make6DofMarker(name, false, visualization_msgs::InteractiveMarkerControl::MOVE_ROTATE_3D, position, true );
+        server->applyChanges();
+    } 
     
 }
+
+void PluginPanel::button4_on_click()
+{
+  visualization_msgs::InteractiveMarker int_marker;
+  // QList<Waypoint> waypoints = waypointmodel->getWaypoints();
+  for (QList<Waypoint>::iterator it = waypointmodel->waypoints.begin(); it != waypointmodel->waypoints.end(); ++it){
+        int i = it - waypointmodel->waypoints.begin();
+        char name[50];
+        sprintf(name,"%d",i);
+
+        bool exist = server->get(name, int_marker);
+        // ROS_INFO_STREAM(exist);
+        it->x = int_marker.pose.position.x;
+        it->y = int_marker.pose.position.y;
+        it->z = int_marker.pose.position.z;
+        it->qx = int_marker.pose.orientation.x;
+        it->qy = int_marker.pose.orientation.y;
+        it->qz = int_marker.pose.orientation.z;
+        it->qw = int_marker.pose.orientation.w;
+        
+    } 
+  
+}
+
+
 
 void processFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback )
 {
@@ -130,6 +167,12 @@ void processFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPt
                    << " in frame " << feedback->header.frame_id;
   }
 
+  std::stringstream m_name(feedback->marker_name);
+  int i = 0;
+  m_name >> i;
+  // QList<Waypoint> waypoints = this->waypoints;
+  // QList<Waypoint>* waypoints = g_waypoints;
+  // QList<Waypoint>::iterator it = waypoints->begin() + i;
   switch ( feedback->event_type )
   {
     case visualization_msgs::InteractiveMarkerFeedback::BUTTON_CLICK:
@@ -154,6 +197,8 @@ void processFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPt
           << "\nframe: " << feedback->header.frame_id
           << " time: " << feedback->header.stamp.sec << "sec, "
           << feedback->header.stamp.nsec << " nsec" );
+             
+
       break;
 
     case visualization_msgs::InteractiveMarkerFeedback::MOUSE_DOWN:
@@ -176,9 +221,9 @@ Marker makeBox( InteractiveMarker &msg )
   Marker marker;
 
   marker.type = Marker::CUBE;
-  marker.scale.x = msg.scale * 0.45;
-  marker.scale.y = msg.scale * 0.45;
-  marker.scale.z = msg.scale * 0.45;
+  marker.scale.x = msg.scale * 0.05;
+  marker.scale.y = msg.scale * 0.05;
+  marker.scale.z = msg.scale * 0.05;
   marker.color.r = 0.5;
   marker.color.g = 0.5;
   marker.color.b = 0.5;
@@ -229,7 +274,7 @@ void PluginPanel::make6DofMarker(std::string name, bool fixed, unsigned int inte
       if( interaction_mode == visualization_msgs::InteractiveMarkerControl::MOVE_3D )         mode_text = "MOVE_3D";
       if( interaction_mode == visualization_msgs::InteractiveMarkerControl::ROTATE_3D )       mode_text = "ROTATE_3D";
       if( interaction_mode == visualization_msgs::InteractiveMarkerControl::MOVE_ROTATE_3D )  mode_text = "MOVE_ROTATE_3D";
-      int_marker.name += "_" + mode_text;
+      // int_marker.name += "_" + mode_text;
       int_marker.description = std::string("3D Control") + (show_6dof ? " + 6-DOF controls" : "") + "\n" + mode_text;
   }
 
