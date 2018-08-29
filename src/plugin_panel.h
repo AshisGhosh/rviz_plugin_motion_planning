@@ -25,6 +25,7 @@ protected:
     QPushButton* _button2;
     QPushButton* _button3;
     QPushButton* _button4;
+    QPushButton* _button5;
 
     QListView* _listview;
     QStringListModel* _stringlist1;
@@ -48,5 +49,6 @@ private Q_SLOTS:
     void button2_on_click();
     void button3_on_click();
     void button4_on_click();
+    void button5_on_click();
 
 };

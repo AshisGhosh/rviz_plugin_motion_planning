@@ -17,6 +17,7 @@ PluginPanel::PluginPanel(QWidget* parent):
     _button2 = new QPushButton(tr("Delete"));
     _button3 = new QPushButton(tr("Load Path"));
     _button4 = new QPushButton(tr("Update Path"));
+    _button5 = new QPushButton(tr("Load Waypoints"));
 
     _button1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _button2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -25,6 +26,7 @@ PluginPanel::PluginPanel(QWidget* parent):
 
     _button4->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
+    _button5->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     connect(_button1, SIGNAL (released()), this, SLOT (button1_on_click()));
     connect(_button2, SIGNAL (released()), this, SLOT (button2_on_click()));
@@ -32,6 +34,9 @@ PluginPanel::PluginPanel(QWidget* parent):
     connect(_button3, SIGNAL (released()), this, SLOT (button3_on_click()));
 
     connect(_button4, SIGNAL (released()), this, SLOT (button4_on_click()));
+
+    connect(_button5, SIGNAL (released()), this, SLOT (button5_on_click()));
+
 
     _listview = new QListView();
 
@@ -66,7 +71,7 @@ PluginPanel::PluginPanel(QWidget* parent):
     _vbox->addLayout(_hbox1);
     _vbox->addWidget(_button3);
     _vbox->addWidget(_button4); 
-
+    _vbox->addWidget(_button5);
     
     setLayout(_vbox);
     
@@ -147,7 +152,12 @@ void PluginPanel::button4_on_click()
         it->qw = int_marker.pose.orientation.w;
         
     } 
-  
+  Q_EMIT (waypointmodel->layoutChanged());
+}
+
+void PluginPanel::button5_on_click()
+{
+
 }
 
 
@@ -247,7 +257,7 @@ InteractiveMarkerControl& makeBoxControl( InteractiveMarker &msg )
 void PluginPanel::make6DofMarker(std::string name, bool fixed, unsigned int interaction_mode, const tf::Vector3& position, bool show_6dof )
 {
   InteractiveMarker int_marker;
-  int_marker.header.frame_id = "base_link";
+  int_marker.header.frame_id = "world";
   tf::pointTFToMsg(position, int_marker.pose.position);
   int_marker.scale = 1;
 
