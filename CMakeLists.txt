@@ -14,6 +14,9 @@ link_directories(${catkin_LIBRARY_DIRS})
 add_executable(create_markers src/create_markers.cpp)
 target_link_libraries(create_markers ${catkin_LIBRARIES})
 
+add_executable(testread src/testread.cpp)
+target_link_libraries(testread ${catkin_LIBRARIES})
+
 
 ## This setting causes Qt's "MOC" generation to happen automatically.
 set(CMAKE_AUTOMOC ON)

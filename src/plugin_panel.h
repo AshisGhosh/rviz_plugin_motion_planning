@@ -26,6 +26,10 @@ protected:
     QPushButton* _button3;
     QPushButton* _button4;
     QPushButton* _button5;
+    QPushButton* _button6;
+
+    QLineEdit* _lineedit1;
+    QLineEdit* _lineedit2;
 
     QListView* _listview;
     QStringListModel* _stringlist1;
@@ -41,7 +45,7 @@ protected:
     // interactive_markers::InteractiveMarkerClient* _client;
 
 private:
-    void make6DofMarker(std::string name, bool fixed, unsigned int interaction_mode, const tf::Vector3& position, bool show_6dof );
+    void make6DofMarker(std::string name, bool fixed, unsigned int interaction_mode, const tf::Vector3& position, const tf::Quaternion& orientation, bool show_6dof );
     // void processFeedback( const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback );
 
 private Q_SLOTS:
@@ -50,5 +54,6 @@ private Q_SLOTS:
     void button3_on_click();
     void button4_on_click();
     void button5_on_click();
+    void button6_on_click();
 
 };
