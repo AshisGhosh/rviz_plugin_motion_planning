@@ -264,22 +264,6 @@ void PluginPanel::button6_on_click()
   
   if (outfile.is_open())
   {
-    //   while (infile >> j1 >> j2 >> j3 >> j4 >> j5 >> j6 >> x_pos >> y_pos >> z_pos >> qx >> qy >> qz >> qw)
-    //   {
-    //       Waypoint waypoint;
-    //       std::cout << j1<<j2<<j3<<j4<<j5<<j6<<x_pos<<y_pos<<z_pos<<qx<<qy << qz << qw << std::endl;
-    //       waypoint.x = x_pos;
-    //       waypoint.y = y_pos;
-    //       waypoint.z = z_pos;
-    //       waypoint.qx = qx;
-    //       waypoint.qy = qy;
-    //       waypoint.qz = qz;
-    //       waypoint.qw = qw;
-    //       waypoints.push_back(waypoint);
-    //   }
-    //   waypointmodel->waypoints = waypoints;
-    //   Q_EMIT (waypointmodel->layoutChanged());
-
     outfile << "x " << "y " << "z " << "qx " << "qy " << "qz " << "qw" <<std::endl;
 
       for (QList<Waypoint>::iterator it = waypointmodel->waypoints.begin(); it != waypointmodel->waypoints.end(); ++it)
